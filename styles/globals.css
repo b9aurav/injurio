@@ -2,3 +2,13 @@
     padding: 0;
     margin: 0;
 }
+
+.title {
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.header {
+    align-items: center;
+    color: white;
+}
