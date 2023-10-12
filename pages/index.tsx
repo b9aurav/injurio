@@ -1,6 +1,8 @@
 import React from 'react'
 import { useUser } from '@auth0/nextjs-auth0/client'
 
+import { Button } from 'antd'
+
 const index = () => {
   const { user, error, isLoading } = useUser();
   
@@ -11,11 +13,13 @@ const index = () => {
     return (
       <div>
         Welcome, {user.name}<br/>
-        <a href='/api/auth/logout'>Logout</a>
+        <Button type="primary">
+          <a href='/api/auth/logout'>Logout</a>
+        </Button>
       </div>
     )
   }
-  return <a href='/api/auth/login'>Login</a>
+  return <Button type="primary"><a href='/api/auth/login'>Login</a></Button>
 }
 
 export default index
