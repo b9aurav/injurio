@@ -9,3 +9,38 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Reporter {
+  id      String      @id
+  name    String
+  reports InjuryReport[]
+}
+
+model BodyMapArea {
+  id          Int           @id @default(autoincrement())
+  label       String
+  description String
+  reports     InjuryReport[] // Relationship field in BodyMapArea model
+  injuryDetails InjuryDetail[] // Opposite relation field in BodyMapArea model
+}
+
+model InjuryReport {
+  id             Int            @id @default(autoincrement())
+  reporterId     String
+  reporter       Reporter       @relation(fields: [reporterId], references: [id])
+  injuryDatetime DateTime
+  bodyMapAreas   Json[]
+  created_at     DateTime       @default(now())
+  updated_at     DateTime       @updatedAt
+  injuries       InjuryDetail[] // Relationship field in InjuryReport model
+  bodyMapArea    BodyMapArea[]  // Opposite relation field in InjuryReport model
+}
+
+model InjuryDetail {
+  id              Int           @id @default(autoincrement())
+  reportId        Int
+  bodyMapAreaId   Int
+  report          InjuryReport  @relation(fields: [reportId], references: [id])
+  bodyMapArea     BodyMapArea   @relation(fields: [bodyMapAreaId], references: [id])
+  injuryDescription String
+}
