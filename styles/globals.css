@@ -3,6 +3,10 @@
     margin: 0;
 }
 
+.layout {
+    min-height: 100vh;
+}
+
 .title {
     color: white;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -11,4 +15,10 @@
 .header {
     align-items: center;
     color: white;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

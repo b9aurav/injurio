@@ -1,28 +1,78 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import {
   Avatar,
   Button,
   Col,
   Dropdown,
-  Flex,
-  Form,
-  Input,
-  InputNumber,
   Layout,
   MenuProps,
   Row,
   Space,
   theme,
 } from "antd";
+import Report from "./report";
 
-const { Header, Content, Footer } = Layout;
+const { Header, Content } = Layout;
 
 const Home: React.FC = () => {
   const user = useUser();
   const {
     token: { colorBgContainer },
   } = theme.useToken();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch existing user data
+        const getReporterResponse = await fetch("/api/reporter/get", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: user.user?.sub,
+          }),
+        });
+
+        if (getReporterResponse.ok) {
+          const data = await getReporterResponse.json();
+          if (data.notFound) {
+            createReporter();
+          }
+        } else {
+          console.error("Error:", getReporterResponse.statusText);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+
+    const createReporter = async () => {
+      try {
+        const createReporterResponse = await fetch(
+          "/api/reporter/create",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              id: user.user?.sub,
+              name: user.user?.nickname,
+            }),
+          }
+        );
+        if (!createReporterResponse.ok) {
+          console.error("Error:", createReporterResponse.statusText);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
+
+    fetchData();
+  }, [user]);
 
   const items: MenuProps["items"] = [
     {
@@ -73,44 +123,7 @@ const Home: React.FC = () => {
         </Row>
       </Header>
       <Content style={{ padding: "0 50px" }}>
-        <Form
-          {...layout}
-          name="nest-messages"
-          style={{ maxWidth: 600 }}
-        >
-          <Form.Item
-            name={["user", "name"]}
-            label="Name"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name={["user", "email"]}
-            label="Email"
-            rules={[{ type: "email" }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name={["user", "age"]}
-            label="Age"
-            rules={[{ type: "number", min: 0, max: 99 }]}
-          >
-            <InputNumber />
-          </Form.Item>
-          <Form.Item name={["user", "website"]} label="Website">
-            <Input />
-          </Form.Item>
-          <Form.Item name={["user", "introduction"]} label="Introduction">
-            <Input.TextArea />
-          </Form.Item>
-          <Form.Item wrapperCol={{ offset: 8 }}>
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
-          </Form.Item>
-        </Form>
+        <Report />
       </Content>
     </Layout>
   );
