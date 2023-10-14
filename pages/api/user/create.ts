@@ -10,7 +10,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       console.log(req.body)
       
       // Check if the user exists in the database
-      const user = await prisma.reporter.create({
+      const user = await prisma.user.create({
         data: {
             id: userSub,
             name: userName

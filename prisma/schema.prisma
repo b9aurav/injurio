@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,37 +7,37 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Reporter {
-  id      String      @id
-  name    String
-  reports InjuryReport[]
-}
-
 model BodyMapArea {
-  id          Int           @id @default(autoincrement())
-  label       String
-  description String
-  reports     InjuryReport[] // Relationship field in BodyMapArea model
-  injuryDetails InjuryDetail[] // Opposite relation field in BodyMapArea model
+  id            Int            @id @default(autoincrement())
+  label         String
+  description   String
+  injuryDetails InjuryDetail[]
+  reports       InjuryReport[] @relation("BodyMapAreaToInjuryReport")
 }
 
 model InjuryReport {
   id             Int            @id @default(autoincrement())
   reporterId     String
-  reporter       Reporter       @relation(fields: [reporterId], references: [id])
   injuryDatetime DateTime
   bodyMapAreas   Json[]
   created_at     DateTime       @default(now())
   updated_at     DateTime       @updatedAt
-  injuries       InjuryDetail[] // Relationship field in InjuryReport model
-  bodyMapArea    BodyMapArea[]  // Opposite relation field in InjuryReport model
+  injuries       InjuryDetail[]
+  reporter       User       @relation(fields: [reporterId], references: [id])
+  bodyMapArea    BodyMapArea[]  @relation("BodyMapAreaToInjuryReport")
 }
 
 model InjuryDetail {
-  id              Int           @id @default(autoincrement())
-  reportId        Int
-  bodyMapAreaId   Int
-  report          InjuryReport  @relation(fields: [reportId], references: [id])
-  bodyMapArea     BodyMapArea   @relation(fields: [bodyMapAreaId], references: [id])
+  id                Int          @id @default(autoincrement())
+  reportId          Int
+  bodyMapAreaId     Int
   injuryDescription String
+  bodyMapArea       BodyMapArea  @relation(fields: [bodyMapAreaId], references: [id])
+  report            InjuryReport @relation(fields: [reportId], references: [id])
+}
+
+model User {
+  id      String         @id
+  name    String
+  reports InjuryReport[]
 }

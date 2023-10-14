@@ -7,7 +7,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const userSub = req.body.id;
 
       // Check if the user exists in the database
-      const user = await prisma.reporter.findUnique({
+      const user = await prisma.user.findUnique({
         where: { id: userSub },
       });
 

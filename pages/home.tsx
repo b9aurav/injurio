@@ -22,10 +22,10 @@ const Home: React.FC = () => {
   } = theme.useToken();
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchUser = async () => {
       try {
         // Fetch existing user data
-        const getReporterResponse = await fetch("/api/reporter/get", {
+        const getUserResponse = await fetch("/api/user/get", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -35,23 +35,23 @@ const Home: React.FC = () => {
           }),
         });
 
-        if (getReporterResponse.ok) {
-          const data = await getReporterResponse.json();
+        if (getUserResponse.ok) {
+          const data = await getUserResponse.json();
           if (data.notFound) {
-            createReporter();
+            createUser();
           }
         } else {
-          console.error("Error:", getReporterResponse.statusText);
+          console.error("Error:", getUserResponse.statusText);
         }
       } catch (error) {
         console.error("Error:", error);
       }
     };
 
-    const createReporter = async () => {
+    const createUser = async () => {
       try {
-        const createReporterResponse = await fetch(
-          "/api/reporter/create",
+        const createUserResponse = await fetch(
+          "/api/user/create",
           {
             method: "POST",
             headers: {
@@ -63,15 +63,15 @@ const Home: React.FC = () => {
             }),
           }
         );
-        if (!createReporterResponse.ok) {
-          console.error("Error:", createReporterResponse.statusText);
+        if (!createUserResponse.ok) {
+          console.error("Error:", createUserResponse.statusText);
         }
       } catch (error) {
         console.error("Error:", error);
       }
     }
 
-    fetchData();
+    fetchUser();
   }, [user]);
 
   const items: MenuProps["items"] = [
