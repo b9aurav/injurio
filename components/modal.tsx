@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Button, DatePicker, Divider, Form, Input, Modal, Space } from "antd";
+import React, { useEffect, useState } from "react";
+import { Button, DatePicker, Divider, Form, Input, Modal, Space, message } from "antd";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import BodyMap from "./bodyMap";
 
@@ -15,21 +15,76 @@ const ReportModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
   onClose,
 }) => {
   const { user } = useUser();
-  const [parentEncircledAreas, setParentEncircledAreas] = useState<
-    EncircledArea[]
-  >([]);
+  const [EncircledAreas, setEncircledAreas] = useState<EncircledArea[]>([]);
 
   const layout = {
     labelCol: { span: 8 },
     wrapperCol: { span: 16 },
   };
 
-  const onFinish = (values: any) => {
-    console.log("Success:", values, parentEncircledAreas);
+  const onSave = (values: any) => {
+    console.log(values, EncircledAreas);
+
+    const saveInjury = async (injury: EncircledArea, reportId: number) => {
+      try {
+        const createInjuryResponse = await fetch("/api/injury/create", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: injury.id,
+            reportId: reportId,
+            xPos: injury.x,
+            yPos: injury.y,
+            detail: injury.detail,
+          }),
+        });
+
+        if (!createInjuryResponse.ok) {
+          console.error("Error:", createInjuryResponse.statusText);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+
+    const saveReport = async () => {
+      try {
+        const createReportResponse = await fetch("/api/report/create", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: user?.sub,
+            name: values.name,
+            datetime: values.datetime,
+          }),
+        });
+
+        if (createReportResponse.ok) {
+          const data = await createReportResponse.json();
+          return data.id;
+        } else {
+          console.error("Error:", createReportResponse.statusText);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+
+    saveReport().then((id) => {
+      EncircledAreas.forEach((encircleAria: EncircledArea) => {
+        saveInjury(encircleAria, id);
+      });
+      message.success('Report Saved');
+      onClose();
+    });
   };
 
   function updateEncircledAreas(areas: EncircledArea[]): void {
-    setParentEncircledAreas(areas);
+    setEncircledAreas(areas);
   }
 
   return (
@@ -41,10 +96,11 @@ const ReportModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
         maskClosable={false}
         width={1000}
         onCancel={onClose}
+        destroyOnClose={true}
         footer={null}
       >
         <Divider />
-        <Form {...layout} name="control-hooks" onFinish={onFinish}>
+        <Form {...layout} name="control-hooks" onFinish={onSave}>
           <Form.Item name="name" label="Name">
             <Input />
           </Form.Item>
@@ -56,7 +112,12 @@ const ReportModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
           <Divider />
           <Form.Item wrapperCol={{ span: 24 }}>
             <Space style={{ float: "right" }}>
-              <Button danger onClick={onClose} size="large" style={{ padding: "0 40px" }}>
+              <Button
+                danger
+                onClick={onClose}
+                size="large"
+                style={{ padding: "0 40px" }}
+              >
                 Cancel
               </Button>
               <Button
@@ -65,7 +126,7 @@ const ReportModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
                 size="large"
                 style={{ padding: "0 40px" }}
               >
-                Submit
+                Save
               </Button>
             </Space>
           </Form.Item>

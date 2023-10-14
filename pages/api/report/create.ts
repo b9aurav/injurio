@@ -4,19 +4,20 @@ import prisma from '@/lib/prisma';
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
     try {
-      const userSub = req.body.id;
-      const userName = req.body.name;
+      const userId = req.body.userId;
+      const datetime = req.body.datetime;
+      const name = req.body.name;
 
-      // Check if the user exists in the database
-      const user = await prisma.user.create({
+      const report = await prisma.injuryReport.create({
         data: {
-            id: userSub,
-            name: userName
+            userId: userId,
+            datetime: datetime,
+            name: name
         }
       })
 
-      if (user) {
-        res.status(200).json(user);
+      if (report) {
+        res.status(200).json({id: report.id});
       }
     } catch (error) {
       console.error(error);

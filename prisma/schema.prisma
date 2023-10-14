@@ -7,32 +7,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model BodyMapArea {
-  id            Int            @id @default(autoincrement())
-  label         String
-  description   String
-  injuryDetails InjuryDetail[]
-  reports       InjuryReport[] @relation("BodyMapAreaToInjuryReport")
-}
-
 model InjuryReport {
   id             Int            @id @default(autoincrement())
-  reporterId     String
-  injuryDatetime DateTime
-  bodyMapAreas   Json[]
+  userId     String
+  name String
+  datetime DateTime
   created_at     DateTime       @default(now())
   updated_at     DateTime       @updatedAt
   injuries       InjuryDetail[]
-  reporter       User       @relation(fields: [reporterId], references: [id])
-  bodyMapArea    BodyMapArea[]  @relation("BodyMapAreaToInjuryReport")
+  user           User       @relation(fields: [userId], references: [id])
 }
 
 model InjuryDetail {
   id                Int          @id @default(autoincrement())
   reportId          Int
-  bodyMapAreaId     Int
+  x Float
+  y Float
   injuryDescription String
-  bodyMapArea       BodyMapArea  @relation(fields: [bodyMapAreaId], references: [id])
   report            InjuryReport @relation(fields: [reportId], references: [id])
 }
 

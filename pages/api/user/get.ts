@@ -12,9 +12,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       });
 
       if (user) {
-        res.status(200).json(user);
+        res.status(200).json({'found': true});
       } else {
-        res.status(200).json({'notFound': true});
+        res.status(200).json({'found': false});
       }
     } catch (error) {
       console.error(error);

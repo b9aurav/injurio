@@ -37,7 +37,7 @@ const Home: React.FC = () => {
 
         if (getUserResponse.ok) {
           const data = await getUserResponse.json();
-          if (data.notFound) {
+          if (!data.found) {
             createUser();
           }
         } else {
