@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-// import InjuryDetailsTable from "./injuryDetailsTable";
 import { Button, Col, Input, Row, Space, Table, message } from "antd";
 import { ColumnsType } from "antd/es/table";
 
@@ -73,7 +72,6 @@ const BodyMap: React.FC<{
               }));
             }}
             />
-          {/* onUpdateDetails(record.id, e.currentTarget.previousSibling?.nodeValue) */}
           <Button
             onClick={(e) => {
                 const detailInput = document.querySelector(

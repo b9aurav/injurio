@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, DatePicker, Divider, Form, Input, Modal } from "antd";
+import { Button, DatePicker, Divider, Form, Input, Modal, Space } from "antd";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import BodyMap from "./bodyMap";
 
@@ -40,14 +40,8 @@ const ReportModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
         open={isOpen}
         maskClosable={false}
         width={1000}
-        footer={[
-          <Button key="cancel" onClick={onClose} danger>
-            Cancel
-          </Button>,
-          <Button key="save" onClick={onClose} type="primary">
-            Save
-          </Button>,
-        ]}
+        onCancel={onClose}
+        footer={null}
       >
         <Divider />
         <Form {...layout} name="control-hooks" onFinish={onFinish}>
@@ -59,13 +53,23 @@ const ReportModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
           </Form.Item>
           <Divider />
           <BodyMap onUpdateEncircledAreas={updateEncircledAreas} />
-          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
+          <Divider />
+          <Form.Item wrapperCol={{ span: 24 }}>
+            <Space style={{ float: "right" }}>
+              <Button danger onClick={onClose} size="large" style={{ padding: "0 40px" }}>
+                Cancel
+              </Button>
+              <Button
+                type="primary"
+                htmlType="submit"
+                size="large"
+                style={{ padding: "0 40px" }}
+              >
+                Submit
+              </Button>
+            </Space>
           </Form.Item>
         </Form>
-        <Divider />
       </Modal>
     </>
   );
