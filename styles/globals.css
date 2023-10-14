@@ -1,24 +1,66 @@
 * {
-    padding: 0;
-    margin: 0;
+  padding: 0;
+  margin: 0;
 }
 
 .layout {
-    min-height: 100vh;
+  min-height: 100vh;
 }
 
 .title {
-    color: white;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: white;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .header {
-    align-items: center;
-    color: white;
+  align-items: center;
+  color: white;
 }
 
 .center {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bodyContainer {
+  width: 100%; /* Set the width to 100% of the parent container */
+  height: 0; /* Maintain aspect ratio */
+  padding-bottom: 100%; /* Aspect ratio: 1:1 (for a square aspect ratio) */
+  position: relative;
+  overflow: hidden;
+}
+
+.bodyContainer img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Maintain aspect ratio and cover the container */
+  object-position: center center; /* Center the image within the container */
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.clickableArea {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background-color: #007bff; /* Change color as needed */
+  border-radius: 50%;
+  color: white;
+  font-weight: bold;
+  font-size: large;
+  cursor: pointer;
+  /* Hide the delete button by default */
+  .deleteButton {
+    display: none;
+  }
+
+  /* Show the delete button when the parent is being hovered */
+  &:hover .deleteButton {
+    display: block;
+  }
+  &:hover .areaId {
+    display: none;
+  }
 }

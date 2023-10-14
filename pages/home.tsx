@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import {
   Avatar,
@@ -84,11 +84,6 @@ const Home: React.FC = () => {
       ),
     },
   ];
-
-  const layout = {
-    labelCol: { span: 8 },
-    wrapperCol: { span: 16 },
-  };
 
   return (
     <Layout className="layout">
