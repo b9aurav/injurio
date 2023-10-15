@@ -8,23 +8,23 @@ datasource db {
 }
 
 model InjuryReport {
-  id             Int            @id @default(autoincrement())
+  id         Int            @id @default(autoincrement())
+  created_at DateTime       @default(now())
+  updated_at DateTime       @updatedAt
   userId     String
-  name String
-  datetime DateTime
-  created_at     DateTime       @default(now())
-  updated_at     DateTime       @updatedAt
-  injuries       InjuryDetail[]
-  user           User       @relation(fields: [userId], references: [id])
+  datetime   DateTime
+  name       String
+  injuries   InjuryDetail[]
+  user       User           @relation(fields: [userId], references: [id])
 }
 
 model InjuryDetail {
   id                Int          @id @default(autoincrement())
   reportId          Int
-  x Float
-  y Float
   injuryDescription String
-  report            InjuryReport @relation(fields: [reportId], references: [id])
+  x                 Float
+  y                 Float
+  report            InjuryReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
 }
 
 model User {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button, DatePicker, Divider, Form, Input, Modal, Space, message } from "antd";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import BodyMap from "./bodyMap";
@@ -10,7 +10,7 @@ interface EncircledArea {
   detail: string;
 }
 
-const ReportModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
+const CreateReportModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
   isOpen,
   onClose,
 }) => {
@@ -23,8 +23,6 @@ const ReportModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
   };
 
   const onSave = (values: any) => {
-    console.log(values, EncircledAreas);
-
     const saveInjury = async (injury: EncircledArea, reportId: number) => {
       try {
         const createInjuryResponse = await fetch("/api/injury/create", {
@@ -136,4 +134,4 @@ const ReportModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
   );
 };
 
-export default ReportModal;
+export default CreateReportModal;
