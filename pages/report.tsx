@@ -1,6 +1,6 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, Input, InputRef, Space, Table } from "antd";
-import type { ColumnType, ColumnsType, TableProps } from "antd/es/table";
+import type { ColumnsType } from "antd/es/table";
 import { PlusOutlined } from "@ant-design/icons";
 import ReportModal from "@/components/modal";
 import { useUser } from "@auth0/nextjs-auth0/client";
@@ -24,6 +24,9 @@ const Report: React.FC = () => {
 
   const closeReportModal = () => {
     setModalOpen(false);
+    getReports().then((reports) => {
+      setData(reports);
+    });
   };
 
 
@@ -36,16 +39,6 @@ const Report: React.FC = () => {
     dataIndex: DataIndex
   ) => {
     confirm();
-  };
-
-  const [filteredInfo, setFilteredInfo] = useState<{ created_at?: Date[] } | null>(null);
-
-  const handleDateFilter = (dates: [Date, Date] | null) => {
-    setFilteredInfo(dates ? { created_at: dates } : null);
-  };
-
-  const clearDateFilter = () => {
-    setFilteredInfo(null);
   };
 
   const columns: ColumnsType<DataType> = [
@@ -130,9 +123,11 @@ const Report: React.FC = () => {
     }
   };
 
-  getReports().then((reports) => {
-    setData(reports);
-  });
+  useEffect(() => {
+    getReports().then((reports) => {
+      setData(reports);
+    });
+  }, [])
 
   return (
     <>
