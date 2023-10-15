@@ -1,16 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Button, Input, InputRef, Space, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, EyeOutlined, SearchOutlined } from "@ant-design/icons";
 import ReportModal from "@/components/modal";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { FilterConfirmProps } from "antd/es/table/interface";
-import SearchOutlined from "antd/lib/icon";
 
 interface DataType {
   name: string;
-  injurydate: Date;
-  reportdate: Date;
+  datetime: Date;
+  created_at: Date;
 }
 
 const Report: React.FC = () => {
@@ -79,7 +78,7 @@ const Report: React.FC = () => {
         </div>
       ),
       filterIcon: (filtered: boolean) => (
-        <label style={{ color: filtered ? "#1677ff" : undefined }}>🔍</label>
+        <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }}></SearchOutlined>
       ),
       onFilter: (value, record) =>
         record['name']
@@ -96,11 +95,19 @@ const Report: React.FC = () => {
       title: "Date/Time of Injury",
       dataIndex: "datetime",
       render: (datetime) => new Date(datetime).toLocaleString(),
+      sorter: (a, b) => new Date(a.datetime).getDate() - new Date(b.datetime).getDate()
     },
     {
       title: "Date/Time of Report",
       dataIndex: "created_at",
       render: (datetime) => new Date(datetime).toLocaleString(),
+      sorter: (a, b) => new Date(a.created_at).getDate() - new Date(b.created_at).getDate()
+    },
+    {
+      title: 'Action',
+      dataIndex: '',
+      key: 'x',
+      render: () => <Button type="primary"><EyeOutlined /></Button>,
     },
   ];
 
@@ -143,7 +150,7 @@ const Report: React.FC = () => {
         </Button>
         <ReportModal isOpen={isModalOpen} onClose={closeReportModal} />
       </div>
-      <Table bordered columns={columns} dataSource={data} />
+      <Table bordered columns={columns} scroll={{ y: 'max-width' }} dataSource={data} />
     </>
   );
 };

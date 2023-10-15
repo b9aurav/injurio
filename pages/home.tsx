@@ -117,7 +117,7 @@ const Home: React.FC = () => {
           </Col>
         </Row>
       </Header>
-      <Content style={{ padding: "0 50px" }}>
+      <Content style={{ padding: "0 10px" }}>
         <Report />
       </Content>
     </Layout>
