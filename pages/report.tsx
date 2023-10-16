@@ -17,7 +17,9 @@ interface DataType {
 const Report: React.FC = () => {
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
-  const [selectedReport, setSelectedReport] = useState(0);
+  const [selectedReportId, setSelectedReportId] = useState(0);
+  const [selectedReportName, setSelectedReportName] = useState('');
+  const [selectedReportInjuryDate, setSelectedReportInjuryDate] = useState(new Date());
   const [data, setData] = useState([]);
   const { user } = useUser();
 
@@ -32,8 +34,10 @@ const Report: React.FC = () => {
     });
   };
 
-  const openEditReportModal = (report: number) => {
-    setSelectedReport(report)
+  const openEditReportModal = (report: number, name: string, injuryDate: Date) => {
+    setSelectedReportId(report);
+    setSelectedReportName(name);
+    setSelectedReportInjuryDate(injuryDate);
     setEditModalOpen(true);
   };
 
@@ -122,7 +126,7 @@ const Report: React.FC = () => {
       title: 'Action',
       dataIndex: '',
       key: 'x',
-      render: (_, record) => <Button type="primary" onClick={() => openEditReportModal(record.id)}><EyeOutlined /></Button>,
+      render: (_, record) => <Button type="primary" onClick={() => openEditReportModal(record.id, record.name, record.datetime)}><EyeOutlined /></Button>,
     },
   ];
 
@@ -164,7 +168,7 @@ const Report: React.FC = () => {
           Report
         </Button>
         <CreateReportModal isOpen={isCreateModalOpen} onClose={closeCreateReportModal} />
-        <EditReportModal reportId={selectedReport} isOpen={isEditModalOpen} onClose={closeEditReportModal} />
+        <EditReportModal reportId={selectedReportId} name={selectedReportName} injuryDate={selectedReportInjuryDate} isOpen={isEditModalOpen} onClose={closeEditReportModal} />
       </div>
       <Table bordered columns={columns} scroll={{ y: 'max-width' }} dataSource={data} />
     </>

@@ -11,18 +11,22 @@ import {
   message,
 } from "antd";
 import BodyMap from "./bodyMap";
+import dayjs from "dayjs";
 
 interface EncircledArea {
   id: number;
+  label: number;
   x: number;
   y: number;
-  detail: string;
+  injuryDescription: string;
 }
 
-const EditReportModal: React.FC<{ isOpen: boolean; onClose: () => void; reportId: number }> = ({
+const EditReportModal: React.FC<{ isOpen: boolean; onClose: () => void; reportId: number, name: string, injuryDate: Date }> = ({
   isOpen,
   onClose,
-  reportId
+  reportId,
+  name,
+  injuryDate
 }) => {
   const [EncircledAreas, setEncircledAreas] = useState<EncircledArea[]>([]);
 
@@ -55,7 +59,7 @@ const EditReportModal: React.FC<{ isOpen: boolean; onClose: () => void; reportId
   };
 
   const onSave = (values: any) => {
-    const saveInjury = async (injury: EncircledArea, reportId: number) => {
+    const saveInjury = async (injury: EncircledArea) => {
       try {
         const createInjuryResponse = await fetch("/api/injury/create", {
           method: "POST",
@@ -65,9 +69,10 @@ const EditReportModal: React.FC<{ isOpen: boolean; onClose: () => void; reportId
           body: JSON.stringify({
             id: injury.id,
             reportId: reportId,
+            label: injury.label,
             xPos: injury.x,
             yPos: injury.y,
-            detail: injury.detail,
+            injuryDescription: injury.injuryDescription,
           }),
         });
 
@@ -79,34 +84,55 @@ const EditReportModal: React.FC<{ isOpen: boolean; onClose: () => void; reportId
       }
     };
 
-    const saveReport = async () => {
+    const deleteAllInjuries = async () => {
       try {
-        const createReportResponse = await fetch("/api/report/create", {
+        const deleteAllInjuriesResponse = await fetch("/api/injury/delete", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            // userId: user?.sub,
-            name: values.name,
-            datetime: values.datetime,
+            reportId: reportId,
           }),
         });
 
-        if (createReportResponse.ok) {
-          const data = await createReportResponse.json();
-          return data.id;
-        } else {
-          console.error("Error:", createReportResponse.statusText);
+        if (!deleteAllInjuriesResponse.ok) {
+          console.error("Error:", deleteAllInjuriesResponse.statusText);
         }
       } catch (error) {
         console.error("Error:", error);
       }
     };
 
-    saveReport().then((id) => {
+    const saveReport = async () => {
+      try {
+        const updateReportResponse = await fetch("/api/report/edit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            reportId: reportId,
+            name: values.name,
+            datetime: values.datetime,
+          }),
+        });
+
+        if (updateReportResponse.ok) {
+          const data = await updateReportResponse.json();
+          return data.id;
+        } else {
+          console.error("Error:", updateReportResponse.statusText);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+
+    saveReport().then(() => {
       EncircledAreas.forEach((encircleAria: EncircledArea) => {
-        saveInjury(encircleAria, id);
+        deleteAllInjuries();
+        saveInjury(encircleAria);
       });
       message.success("Report Saved");
       onClose();
@@ -132,13 +158,13 @@ const EditReportModal: React.FC<{ isOpen: boolean; onClose: () => void; reportId
         <Divider />
         <Form {...layout} name="control-hooks" onFinish={onSave}>
           <Form.Item name="name" label="Name">
-            <Input />
+            <Input defaultValue={name}/>
           </Form.Item>
           <Form.Item name="datetime" label="Date/Time">
-            <DatePicker showTime />
+            <DatePicker defaultValue={dayjs(injuryDate)} showTime />
           </Form.Item>
           <Divider />
-          <BodyMap onUpdateEncircledAreas={updateEncircledAreas} />
+          <BodyMap onUpdateEncircledAreas={updateEncircledAreas} forEdit={true} editReportId={reportId} />
           <Divider />
           <Form.Item wrapperCol={{ span: 24 }}>
             <Space style={{ float: "right" }}>
@@ -146,7 +172,6 @@ const EditReportModal: React.FC<{ isOpen: boolean; onClose: () => void; reportId
                 title="Delete the task"
                 description="Are you sure want to delete this report?"
                 onConfirm={deleteReport}
-                // onCancel={cancel}
                 okText="Yes"
                 cancelText="No"
               >

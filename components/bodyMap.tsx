@@ -1,19 +1,21 @@
-import React, { useState } from "react";
-import { Button, Col, Input, Row, Space, Table, message } from "antd";
+import React, { useEffect, useState } from "react";
+import { Button, Col, Input, Row, Space, Table, Tooltip, message } from "antd";
 import { ColumnsType } from "antd/es/table";
 
 interface EncircledArea {
   id: number;
+  label: number;
   x: number;
   y: number;
-  detail: string;
+  injuryDescription: string;
 }
 
 const BodyMap: React.FC<{
   onUpdateEncircledAreas: (areas: EncircledArea[]) => void;
-}> = ({ onUpdateEncircledAreas }) => {
+  forEdit: boolean;
+  editReportId: number | null;
+}> = ({ onUpdateEncircledAreas, forEdit, editReportId }) => {
   const [encircledAreas, setEncircledAreas] = useState<EncircledArea[]>([]);
-  const [inputValues, setInputValues] = useState<{ [key: number]: string }>({});
 
   const handleAreaClick = (event: React.MouseEvent<HTMLDivElement>) => {
     const target = event.target as HTMLElement;
@@ -30,7 +32,8 @@ const BodyMap: React.FC<{
       x,
       y,
       id: encircledAreas.length + 1,
-      detail: "",
+      label: encircledAreas.length + 1,
+      injuryDescription: "",
     };
     setEncircledAreas([...encircledAreas, newArea]);
     onUpdateEncircledAreas([...encircledAreas, newArea]);
@@ -44,17 +47,51 @@ const BodyMap: React.FC<{
 
   const onUpdateDetails = (id: number, newDetail: string) => {
     const updatedAreas = encircledAreas.map((area) =>
-      area.id === id ? { ...area, detail: newDetail } : area
+      area.id === id ? { ...area, injuryDescription: newDetail } : area
     );
     setEncircledAreas(updatedAreas);
     onUpdateEncircledAreas(updatedAreas);
   };
 
+  const loadSavedEncircledArea = async () => {
+    try {
+      const getInjuryDetailsResponse = await fetch("/api/injury/get", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          reportId: editReportId,
+        }),
+      });
+
+      if (getInjuryDetailsResponse.ok) {
+        const data = await getInjuryDetailsResponse.json();
+        // Filtering reportId from fetched data
+        const filteredData: EncircledArea[] = data.map(
+          ({ reportId, ...rest }: { reportId: any; [key: string]: any }) => rest
+        );
+        setEncircledAreas(filteredData);
+        onUpdateEncircledAreas(filteredData);
+      } else {
+        console.error("Error:", getInjuryDetailsResponse.statusText);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (forEdit) {
+      loadSavedEncircledArea();
+    }
+  }, []);
+
   const columns: ColumnsType<EncircledArea> = [
     {
       title: "Label",
       key: "id",
-      render: (record) => <span>{record.id}</span>,
+      render: (record) => <span>{record.label}</span>,
     },
     {
       title: "Details",
@@ -63,22 +100,15 @@ const BodyMap: React.FC<{
         <Space>
           <Input
             id={"detail-text-" + record.id}
-            value={inputValues[record.id] || ""}
-            onChange={(e) => {
-              const { value } = e.target;
-              setInputValues((prevInputValues) => ({
-                ...prevInputValues,
-                [record.id]: value,
-              }));
-            }}
-            />
+            defaultValue={forEdit ? encircledAreas.find(area => area.id === record.id)?.injuryDescription : ""}
+          />
           <Button
             onClick={(e) => {
-                const detailInput = document.querySelector(
-                    "#detail-text-" + record.id
-                    ) as HTMLInputElement;
-                    onUpdateDetails(record.id, detailInput.value);
-              message.success('Details Updated');
+              const detailInput = document.querySelector(
+                "#detail-text-" + record.id
+              ) as HTMLInputElement;
+              onUpdateDetails(record.id, detailInput.value);
+              message.success("Details Updated");
             }}
           >
             Update
@@ -99,15 +129,17 @@ const BodyMap: React.FC<{
               className="clickableArea center"
               style={{ left: `${area.x - 15}px`, top: `${area.y - 15}px` }}
             >
-              <span className="areaId">{area.id}</span>
-              <Button
-                className="deleteButton"
-                type="primary"
-                onClick={() => handleDeleteArea(area.id)}
-                shape="circle"
-                size="small"
-                danger
-              />
+              <Tooltip title="Delete">
+                <span className="areaId">{area.label}</span>
+                <Button
+                  className="deleteButton"
+                  type="primary"
+                  onClick={() => handleDeleteArea(area.id)}
+                  shape="circle"
+                  size="small"
+                  danger
+                />
+              </Tooltip>
             </div>
           ))}
         </div>

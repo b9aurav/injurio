@@ -20,6 +20,7 @@ model InjuryReport {
 
 model InjuryDetail {
   id                Int          @id @default(autoincrement())
+  label             Int
   reportId          Int
   injuryDescription String
   x                 Float

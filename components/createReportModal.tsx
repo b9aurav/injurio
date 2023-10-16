@@ -5,9 +5,10 @@ import BodyMap from "./bodyMap";
 
 interface EncircledArea {
   id: number;
+  label: number;
   x: number;
   y: number;
-  detail: string;
+  injuryDescription: string;
 }
 
 const CreateReportModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
@@ -24,6 +25,7 @@ const CreateReportModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
 
   const onSave = (values: any) => {
     const saveInjury = async (injury: EncircledArea, reportId: number) => {
+      console.log(injury);
       try {
         const createInjuryResponse = await fetch("/api/injury/create", {
           method: "POST",
@@ -35,7 +37,8 @@ const CreateReportModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
             reportId: reportId,
             xPos: injury.x,
             yPos: injury.y,
-            detail: injury.detail,
+            label: injury.label,
+            injuryDescription: injury.injuryDescription,
           }),
         });
 
@@ -106,7 +109,7 @@ const CreateReportModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
             <DatePicker showTime />
           </Form.Item>
           <Divider />
-          <BodyMap onUpdateEncircledAreas={updateEncircledAreas} />
+          <BodyMap onUpdateEncircledAreas={updateEncircledAreas} forEdit={false} editReportId={null} />
           <Divider />
           <Form.Item wrapperCol={{ span: 24 }}>
             <Space style={{ float: "right" }}>
