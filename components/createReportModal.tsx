@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { Button, DatePicker, Divider, Form, Input, Modal, Space, message } from "antd";
+import {
+  Button,
+  DatePicker,
+  Divider,
+  Form,
+  Input,
+  Modal,
+  Space,
+  message,
+} from "antd";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import BodyMap from "./bodyMap";
 
@@ -79,7 +88,7 @@ const CreateReportModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
       EncircledAreas.forEach((encircleAria: EncircledArea) => {
         saveInjury(encircleAria, id);
       });
-      message.success('Report Saved');
+      message.success("Report Saved");
       onClose();
     });
   };
@@ -109,7 +118,11 @@ const CreateReportModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
             <DatePicker showTime />
           </Form.Item>
           <Divider />
-          <BodyMap onUpdateEncircledAreas={updateEncircledAreas} forEdit={false} editReportId={null} />
+          <BodyMap
+            onUpdateEncircledAreas={updateEncircledAreas}
+            forEdit={false}
+            editReportId={null}
+          />
           <Divider />
           <Form.Item wrapperCol={{ span: 24 }}>
             <Space style={{ float: "right" }}>
