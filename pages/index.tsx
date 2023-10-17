@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import Login from "./login";
 import Home from "./home";

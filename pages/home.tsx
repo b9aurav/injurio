@@ -15,6 +15,7 @@ import {
 import Report from "./report";
 import { Footer } from "antd/es/layout/layout";
 import { GithubOutlined } from "@ant-design/icons";
+import Head from "next/head";
 
 const { Header, Content } = Layout;
 
@@ -91,55 +92,57 @@ const Home: React.FC = () => {
   ];
 
   return (
-    <ConfigProvider
-      theme={{
-        components: {
-          Layout: {
-            headerBg: "#1d95fb",
-            footerPadding: "15px 50px",
+    <>
+      <Head>
+        <title>Home | Injurio</title>
+      </Head>
+      <ConfigProvider
+        theme={{
+          components: {
+            Layout: {
+              headerBg: "#1d95fb",
+              footerPadding: "15px 50px",
+            },
           },
-        },
-      }}
-    >
-      <Layout className="layout">
-        <Header className="header">
-          <Row>
-            <Col span={8}>
-              <img
-                src="logo.png"
-                style={{ verticalAlign: "middle" }}
-                height={50}
-              />
-            </Col>
-            <Col span={16}>
-              <div
-                className="flex-end"
-              >
-                <Dropdown
-                  menu={{ items }}
-                  trigger={["click"]}
-                  placement="bottomRight"
-                >
-                  <Space>
-                    <p style={{ cursor: "pointer" }}>
-                      Welcome, {user.user?.nickname}
-                    </p>
-                    <Avatar
-                      style={{ cursor: "pointer" }}
-                      shape="square"
-                      size="large"
-                      src={user.user?.picture}
-                    />
-                  </Space>
-                </Dropdown>
-              </div>
-            </Col>
-          </Row>
-        </Header>
-        <Content style={{ padding: "0 10px" }}>
-          <Report />
-        </Content>
-        <Footer
+        }}
+      >
+        <Layout className="layout">
+          <Header className="header">
+            <Row>
+              <Col span={8}>
+                <img
+                  src="logo.png"
+                  style={{ verticalAlign: "middle" }}
+                  height={50}
+                />
+              </Col>
+              <Col span={16}>
+                <div className="flex-end">
+                  <Dropdown
+                    menu={{ items }}
+                    trigger={["click"]}
+                    placement="bottomRight"
+                  >
+                    <Space>
+                      <p style={{ cursor: "pointer" }}>
+                        Welcome, {user.user?.nickname}
+                      </p>
+                      <Avatar
+                        style={{ cursor: "pointer" }}
+                        shape="square"
+                        size="large"
+                        src={user.user?.picture}
+                      />
+                    </Space>
+                  </Dropdown>
+                </div>
+              </Col>
+            </Row>
+          </Header>
+          <Content style={{ padding: "0 10px" }}>
+            <Report />
+          </Content>
+          <Footer
           className="center footer"
         >
           <img src="logo-full.png" width={150} height={40}></img>
@@ -149,8 +152,9 @@ const Home: React.FC = () => {
             icon={<GithubOutlined />}
           />
         </Footer>
-      </Layout>
-    </ConfigProvider>
+        </Layout>
+      </ConfigProvider>
+    </>
   );
 };
 
