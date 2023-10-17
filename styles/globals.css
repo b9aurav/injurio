@@ -15,6 +15,7 @@
 .header {
   align-items: center;
   color: white;
+  box-shadow: 0px 0px 35px gray;
 }
 
 .center {
@@ -24,9 +25,9 @@
 }
 
 .bodyContainer {
-  width: 100%; /* Set the width to 100% of the parent container */
-  height: 0; /* Maintain aspect ratio */
-  padding-bottom: 100%; /* Aspect ratio: 1:1 (for a square aspect ratio) */
+  width: 100%;
+  height: 0;
+  padding-bottom: 100%;
   position: relative;
   overflow: hidden;
 }
@@ -34,8 +35,8 @@
 .bodyContainer img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Maintain aspect ratio and cover the container */
-  object-position: center center; /* Center the image within the container */
+  object-fit: cover; 
+  object-position: center center; 
   position: absolute;
   top: 0;
   left: 0;
@@ -45,18 +46,17 @@
   position: absolute;
   width: 30px;
   height: 30px;
-  background-color: #007bff; /* Change color as needed */
+  background-color: #007bff;
   border-radius: 50%;
   color: white;
   font-weight: bold;
   font-size: large;
   cursor: pointer;
-  /* Hide the delete button by default */
+
   .deleteButton {
     display: none;
   }
 
-  /* Show the delete button when the parent is being hovered */
   &:hover .deleteButton {
     display: block;
   }
@@ -68,4 +68,54 @@
 .loader {
   width: 100vw;
   height: 100vh;
+}
+
+.primary-btn:hover {
+  box-shadow: 0px 0px 35px darkgray;
+}
+
+.table-parent {
+  padding: 8px;
+  background-color: white;
+  border: 1px solid darkgray;
+  border-radius: 15px;
+  margin-bottom: 10px;
+}
+
+.report-heading {
+  margin: 15px;
+}
+
+.logout-btn {
+  width: 100%;
+  color: white !important;
+}
+
+.flex-end {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.footer {
+  background: #1d95fb;
+  padding: 15px 25px;
+}
+
+.login-right-div {
+  background: radial-gradient(
+    circle,
+    rgba(29, 149, 251, 1) 0%,
+    rgba(77, 171, 252, 1) 23%,
+    rgba(124, 193, 253, 1) 64%,
+    rgba(176, 218, 254, 1) 74%,
+    rgba(255, 255, 255, 1) 100%
+  );
+  height: 100vh;
+  box-shadow: darkgray 0px 0px 70px inset;
+}
+
+.login-left-div {
+  height: 100vh;
+  background: whitesmoke;
 }

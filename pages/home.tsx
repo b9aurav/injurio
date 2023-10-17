@@ -4,6 +4,7 @@ import {
   Avatar,
   Button,
   Col,
+  ConfigProvider,
   Dropdown,
   Layout,
   MenuProps,
@@ -12,6 +13,8 @@ import {
   theme,
 } from "antd";
 import Report from "./report";
+import { Footer } from "antd/es/layout/layout";
+import { GithubOutlined } from "@ant-design/icons";
 
 const { Header, Content } = Layout;
 
@@ -50,26 +53,23 @@ const Home: React.FC = () => {
 
     const createUser = async () => {
       try {
-        const createUserResponse = await fetch(
-          "/api/user/create",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              id: user.user?.sub,
-              name: user.user?.nickname,
-            }),
-          }
-        );
+        const createUserResponse = await fetch("/api/user/create", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: user.user?.sub,
+            name: user.user?.nickname,
+          }),
+        });
         if (!createUserResponse.ok) {
           console.error("Error:", createUserResponse.statusText);
         }
       } catch (error) {
         console.error("Error:", error);
       }
-    }
+    };
 
     fetchUser();
   }, [user]);
@@ -78,49 +78,79 @@ const Home: React.FC = () => {
     {
       key: "1",
       label: (
-        <Button type="primary" danger style={{ width: "100%" }}>
-          <a href="/api/auth/logout">Logout</a>
+        <Button
+          href="/api/auth/logout"
+          type="primary"
+          danger
+          className="logout-btn"
+        >
+          Logout
         </Button>
       ),
     },
   ];
 
   return (
-    <Layout className="layout">
-      <Header className="header">
-        <Row>
-          <Col span={8}>
-            <h3 className="title">Injurio</h3>
-          </Col>
-          <Col span={16}>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "end",
-                alignItems: "center",
-              }}
-            >
-              <Dropdown menu={{ items }} placement="bottomRight">
-                <Space>
-                  <p style={{ cursor: "pointer" }}>
-                    Welcome, {user.user?.nickname}
-                  </p>
-                  <Avatar
-                    style={{ cursor: "pointer" }}
-                    shape="square"
-                    size="large"
-                    src={user.user?.picture}
-                  />
-                </Space>
-              </Dropdown>
-            </div>
-          </Col>
-        </Row>
-      </Header>
-      <Content style={{ padding: "0 10px" }}>
-        <Report />
-      </Content>
-    </Layout>
+    <ConfigProvider
+      theme={{
+        components: {
+          Layout: {
+            headerBg: "#1d95fb",
+            footerPadding: "15px 50px",
+          },
+        },
+      }}
+    >
+      <Layout className="layout">
+        <Header className="header">
+          <Row>
+            <Col span={8}>
+              <img
+                src="logo.png"
+                style={{ verticalAlign: "middle" }}
+                height={50}
+              />
+            </Col>
+            <Col span={16}>
+              <div
+                className="flex-end"
+              >
+                <Dropdown
+                  menu={{ items }}
+                  trigger={["click"]}
+                  placement="bottomRight"
+                >
+                  <Space>
+                    <p style={{ cursor: "pointer" }}>
+                      Welcome, {user.user?.nickname}
+                    </p>
+                    <Avatar
+                      style={{ cursor: "pointer" }}
+                      shape="square"
+                      size="large"
+                      src={user.user?.picture}
+                    />
+                  </Space>
+                </Dropdown>
+              </div>
+            </Col>
+          </Row>
+        </Header>
+        <Content style={{ padding: "0 10px" }}>
+          <Report />
+        </Content>
+        <Footer
+          className="center footer"
+        >
+          <img src="logo-full.png" width={150} height={40}></img>
+          <Button
+            href="https://github.com/b9aurav/injurio"
+            shape="circle"
+            icon={<GithubOutlined />}
+          />
+        </Footer>
+      </Layout>
+    </ConfigProvider>
   );
 };
 

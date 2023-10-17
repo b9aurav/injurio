@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Button, Input, InputRef, Space, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { PlusOutlined, EyeOutlined, SearchOutlined } from "@ant-design/icons";
+import { PlusOutlined, EditOutlined, SearchOutlined } from "@ant-design/icons";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { FilterConfirmProps } from "antd/es/table/interface";
 import CreateReportModal from "@/components/createReportModal";
@@ -63,6 +63,7 @@ const Report: React.FC = () => {
     {
       title: "Name",
       dataIndex: "name",
+      width: '30%',
       sorter: (a, b) => a.name.length - b.name.length,
       filterDropdown: ({
         setSelectedKeys,
@@ -86,13 +87,11 @@ const Report: React.FC = () => {
             />
             <Button
               type="primary"
+              shape="round"
               onClick={() => handleSearch(confirm, 'name')}
               icon={<SearchOutlined />}
               size="small"
-              style={{ width: 90 }}
-            >
-              Search
-            </Button>
+            />
           </Space>
         </div>
       ),
@@ -111,13 +110,13 @@ const Report: React.FC = () => {
       },
     },
     {
-      title: "Date/Time of Injury",
+      title: "Injury Date",
       dataIndex: "datetime",
       render: (datetime) => new Date(datetime).toLocaleString(),
       sorter: (a, b) => new Date(a.datetime).getDate() - new Date(b.datetime).getDate()
     },
     {
-      title: "Date/Time of Report",
+      title: "Report Date",
       dataIndex: "created_at",
       render: (datetime) => new Date(datetime).toLocaleString(),
       sorter: (a, b) => new Date(a.created_at).getDate() - new Date(b.created_at).getDate()
@@ -126,7 +125,8 @@ const Report: React.FC = () => {
       title: 'Action',
       dataIndex: '',
       key: 'x',
-      render: (_, record) => <Button type="primary" onClick={() => openEditReportModal(record.id, record.name, record.datetime)}><EyeOutlined /></Button>,
+      width: '23%',
+      render: (_, record) => <Button type="primary" onClick={() => openEditReportModal(record.id, record.name, record.datetime)}><EditOutlined /></Button>,
     },
   ];
 
@@ -159,6 +159,7 @@ const Report: React.FC = () => {
     <>
       <div className="center">
         <Button
+          className="primary-btn"
           type="primary"
           icon={<PlusOutlined />}
           size="large"
@@ -170,7 +171,10 @@ const Report: React.FC = () => {
         <CreateReportModal isOpen={isCreateModalOpen} onClose={closeCreateReportModal} />
         <EditReportModal reportId={selectedReportId} name={selectedReportName} injuryDate={selectedReportInjuryDate} isOpen={isEditModalOpen} onClose={closeEditReportModal} />
       </div>
+      <div className="table-parent">
+        <h3 className="report-heading">Your Reports</h3>
       <Table bordered columns={columns} scroll={{ y: 'max-width' }} dataSource={data} />
+      </div>
     </>
   );
 };

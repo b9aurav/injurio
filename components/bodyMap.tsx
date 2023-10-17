@@ -100,7 +100,12 @@ const BodyMap: React.FC<{
         <Space>
           <Input
             id={"detail-text-" + record.id}
-            defaultValue={forEdit ? encircledAreas.find(area => area.id === record.id)?.injuryDescription : ""}
+            defaultValue={
+              forEdit
+                ? encircledAreas.find((area) => area.id === record.id)
+                    ?.injuryDescription
+                : ""
+            }
           />
           <Button
             onClick={(e) => {
@@ -121,6 +126,9 @@ const BodyMap: React.FC<{
   return (
     <Row>
       <Col sm={12} xs={24}>
+        <label className="center">
+          Click on below body parts to create injury and click again to delete it.
+        </label>
         <div className="bodyContainer" onClick={handleAreaClick}>
           <img src="body.png" alt="Body Outline" />
           {encircledAreas.map((area) => (
