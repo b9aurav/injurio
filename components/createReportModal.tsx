@@ -34,7 +34,6 @@ const CreateReportModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
 
   const onSave = (values: any) => {
     const saveInjury = async (injury: EncircledArea, reportId: number) => {
-      console.log(injury);
       try {
         const createInjuryResponse = await fetch("/api/injury/create", {
           method: "POST",

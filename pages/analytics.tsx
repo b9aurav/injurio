@@ -148,8 +148,10 @@ const Analytics = () => {
           </Typography.Link>
         </Dropdown>
       </div>
+      <div className="center" style={{maxHeight: '688px'}}>
       {selectedChartType === "bar" && <Bar data={data} options={options} />}
       {selectedChartType === "area" && <Line data={data} options={options} />}
+      </div>
     </div>
   );
 };
