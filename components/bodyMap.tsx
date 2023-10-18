@@ -127,7 +127,8 @@ const BodyMap: React.FC<{
     <Row>
       <Col sm={12} xs={24}>
         <label className="center">
-          Click on below body parts to create injury and click again to delete it.
+          Click on below body parts to create injury and click again to delete
+          it.
         </label>
         <div className="bodyContainer" onClick={handleAreaClick}>
           <img src="body.png" alt="Body Outline" />
@@ -153,6 +154,9 @@ const BodyMap: React.FC<{
         </div>
       </Col>
       <Col sm={12} xs={24}>
+        <label className="center">
+          Make sure to click 'Update' after giving injury details.
+        </label>
         <Table
           bordered
           pagination={{ hideOnSinglePage: true, pageSize: 5 }}

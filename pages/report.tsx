@@ -8,7 +8,7 @@ import CreateReportModal from "@/components/createReportModal";
 import EditReportModal from "@/components/editReportModal";
 
 interface DataType {
-  id: number,
+  id: number;
   name: string;
   datetime: Date;
   created_at: Date;
@@ -18,8 +18,10 @@ const Report: React.FC = () => {
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [selectedReportId, setSelectedReportId] = useState(0);
-  const [selectedReportName, setSelectedReportName] = useState('');
-  const [selectedReportInjuryDate, setSelectedReportInjuryDate] = useState(new Date());
+  const [selectedReportName, setSelectedReportName] = useState("");
+  const [selectedReportInjuryDate, setSelectedReportInjuryDate] = useState(
+    new Date()
+  );
   const [data, setData] = useState([]);
   const { user } = useUser();
 
@@ -34,7 +36,11 @@ const Report: React.FC = () => {
     });
   };
 
-  const openEditReportModal = (report: number, name: string, injuryDate: Date) => {
+  const openEditReportModal = (
+    report: number,
+    name: string,
+    injuryDate: Date
+  ) => {
     setSelectedReportId(report);
     setSelectedReportName(name);
     setSelectedReportInjuryDate(injuryDate);
@@ -63,13 +69,9 @@ const Report: React.FC = () => {
     {
       title: "Name",
       dataIndex: "name",
-      width: '30%',
+      width: "30%",
       sorter: (a, b) => a.name.length - b.name.length,
-      filterDropdown: ({
-        setSelectedKeys,
-        selectedKeys,
-        confirm,
-      }) => (
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => (
         <div
           style={{ padding: 8, display: "flex" }}
           onKeyDown={(e) => e.stopPropagation()}
@@ -82,13 +84,13 @@ const Report: React.FC = () => {
               onChange={(e) =>
                 setSelectedKeys(e.target.value ? [e.target.value] : [])
               }
-              onPressEnter={() => handleSearch(confirm, 'name')}
+              onPressEnter={() => handleSearch(confirm, "name")}
               style={{ display: "block" }}
             />
             <Button
               type="primary"
               shape="round"
-              onClick={() => handleSearch(confirm, 'name')}
+              onClick={() => handleSearch(confirm, "name")}
               icon={<SearchOutlined />}
               size="small"
             />
@@ -96,10 +98,12 @@ const Report: React.FC = () => {
         </div>
       ),
       filterIcon: (filtered: boolean) => (
-        <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }}></SearchOutlined>
+        <SearchOutlined
+          style={{ color: filtered ? "#1677ff" : undefined }}
+        ></SearchOutlined>
       ),
       onFilter: (value, record) =>
-        record['name']
+        record["name"]
           .toString()
           .toLowerCase()
           .includes((value as string).toLowerCase()),
@@ -113,20 +117,31 @@ const Report: React.FC = () => {
       title: "Injury Date",
       dataIndex: "datetime",
       render: (datetime) => new Date(datetime).toLocaleString(),
-      sorter: (a, b) => new Date(a.datetime).getDate() - new Date(b.datetime).getDate()
+      sorter: (a, b) =>
+        new Date(a.datetime).getDate() - new Date(b.datetime).getDate(),
     },
     {
       title: "Report Date",
       dataIndex: "created_at",
       render: (datetime) => new Date(datetime).toLocaleString(),
-      sorter: (a, b) => new Date(a.created_at).getDate() - new Date(b.created_at).getDate()
+      sorter: (a, b) =>
+        new Date(a.created_at).getDate() - new Date(b.created_at).getDate(),
     },
     {
-      title: 'Action',
-      dataIndex: '',
-      key: 'x',
-      width: '23%',
-      render: (_, record) => <Button type="primary" onClick={() => openEditReportModal(record.id, record.name, record.datetime)}><EditOutlined /></Button>,
+      title: "Action",
+      dataIndex: "",
+      key: "x",
+      width: "23%",
+      render: (_, record) => (
+        <Button
+          type="primary"
+          onClick={() =>
+            openEditReportModal(record.id, record.name, record.datetime)
+          }
+        >
+          <EditOutlined />
+        </Button>
+      ),
     },
   ];
 
@@ -153,7 +168,7 @@ const Report: React.FC = () => {
     getReports().then((reports) => {
       setData(reports);
     });
-  }, [])
+  }, []);
 
   return (
     <>
@@ -168,12 +183,26 @@ const Report: React.FC = () => {
         >
           Report
         </Button>
-        <CreateReportModal isOpen={isCreateModalOpen} onClose={closeCreateReportModal} />
-        <EditReportModal reportId={selectedReportId} name={selectedReportName} injuryDate={selectedReportInjuryDate} isOpen={isEditModalOpen} onClose={closeEditReportModal} />
+        <CreateReportModal
+          isOpen={isCreateModalOpen}
+          onClose={closeCreateReportModal}
+        />
+        <EditReportModal
+          reportId={selectedReportId}
+          name={selectedReportName}
+          injuryDate={selectedReportInjuryDate}
+          isOpen={isEditModalOpen}
+          onClose={closeEditReportModal}
+        />
       </div>
-      <div className="table-parent">
+      <div className="parent-div">
         <h3 className="report-heading">Your Reports</h3>
-      <Table bordered columns={columns} scroll={{ y: 'max-width' }} dataSource={data} />
+        <Table
+          bordered
+          columns={columns}
+          scroll={{ y: "max-width" }}
+          dataSource={data}
+        />
       </div>
     </>
   );

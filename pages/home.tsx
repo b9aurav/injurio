@@ -9,18 +9,21 @@ import {
   Layout,
   MenuProps,
   Row,
+  Segmented,
   Space,
   theme,
 } from "antd";
 import Report from "./report";
 import { Footer } from "antd/es/layout/layout";
-import { GithubOutlined } from "@ant-design/icons";
+import { GithubOutlined, BarChartOutlined, FileTextOutlined } from "@ant-design/icons";
 import Head from "next/head";
+import Analytics from "./analytics";
 
 const { Header, Content } = Layout;
 
 const Home: React.FC = () => {
   const user = useUser();
+  const [SelectedMenu, setSelectedMenu] = useState('Reports')
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -140,18 +143,33 @@ const Home: React.FC = () => {
             </Row>
           </Header>
           <Content style={{ padding: "0 10px" }}>
-            <Report />
+            <div className="center" style={{marginTop: '10px'}}>
+              <Segmented onChange={(value) => {setSelectedMenu(value.toString())}}
+                size="large"
+                options={[
+                  {
+                    label: "Reports",
+                    value: "Reports",
+                    icon: <FileTextOutlined />,
+                  },
+                  {
+                    label: "Analytics",
+                    value: "Analytics",
+                    icon: <BarChartOutlined />,
+                  },
+                ]}
+              />
+            </div>
+            {SelectedMenu === 'Reports' ? <Report /> : <Analytics />}
           </Content>
-          <Footer
-          className="center footer"
-        >
-          <img src="logo-full.png" width={150} height={40}></img>
-          <Button
-            href="https://github.com/b9aurav/injurio"
-            shape="circle"
-            icon={<GithubOutlined />}
-          />
-        </Footer>
+          <Footer className="center footer">
+            <img src="logo-full.png" width={150} height={40}></img>
+            <Button
+              href="https://github.com/b9aurav/injurio"
+              shape="circle"
+              icon={<GithubOutlined />}
+            />
+          </Footer>
         </Layout>
       </ConfigProvider>
     </>
