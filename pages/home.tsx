@@ -11,6 +11,7 @@ import {
   Row,
   Segmented,
   Space,
+  message,
   theme,
 } from "antd";
 import Report from "./report";
@@ -27,6 +28,16 @@ const Home: React.FC = () => {
   const {
     token: { colorBgContainer },
   } = theme.useToken();
+
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const loader = () => {
+    messageApi.open({
+      type: 'loading',
+      content: 'Please wait...',
+      duration: 0,
+    });
+  };
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -75,7 +86,9 @@ const Home: React.FC = () => {
       }
     };
 
+    loader();
     fetchUser();
+    messageApi.destroy();
   }, [user]);
 
   const items: MenuProps["items"] = [

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button, Input, InputRef, Space, Table } from "antd";
+import { Button, Input, InputRef, Space, Table, message } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { PlusOutlined, EditOutlined, SearchOutlined } from "@ant-design/icons";
 import { useUser } from "@auth0/nextjs-auth0/client";
@@ -24,6 +24,16 @@ const Report: React.FC = () => {
   );
   const [data, setData] = useState([]);
   const { user } = useUser();
+
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const loader = () => {
+    messageApi.open({
+      type: 'loading',
+      content: 'Please wait...',
+      duration: 0,
+    });
+  };
 
   const openCreateReportModal = () => {
     setCreateModalOpen(true);
@@ -165,9 +175,11 @@ const Report: React.FC = () => {
   };
 
   useEffect(() => {
+    loader();
     getReports().then((reports) => {
       setData(reports);
     });
+    messageApi.destroy();
   }, []);
 
   return (

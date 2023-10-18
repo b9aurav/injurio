@@ -14,7 +14,7 @@ import {
   Filler,
   Legend,
 } from "chart.js";
-import { Dropdown, MenuProps, Space, Typography } from "antd";
+import { Dropdown, MenuProps, Space, Typography, message } from "antd";
 import DownOutlined from "@ant-design/icons";
 
 Chart.register([
@@ -39,6 +39,16 @@ const Analytics = () => {
     data: [],
   });
   const [selectedChartType, setSelectedChartType] = useState("bar");
+
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const loader = () => {
+    messageApi.open({
+      type: 'loading',
+      content: 'Please wait...',
+      duration: 0,
+    });
+  };
 
   const items: MenuProps["items"] = [
     {
@@ -88,7 +98,10 @@ const Analytics = () => {
         console.error("Error:", error);
       }
     };
+
+    loader();
     getReportData();
+    messageApi.destroy();
   }, [user]);
 
   const options = {
