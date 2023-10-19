@@ -19,7 +19,7 @@ const Login: React.FC = () => {
                   alt="logo"
                   style={{ filter: "drop-shadow(2px 4px 6px black)" }}
                 />
-                <Button href="/api/auth/login" size="large" type="primary">
+                <Button href="/api/auth/login" size="large">
                   Get Started
                 </Button>
               </Space>
@@ -27,6 +27,9 @@ const Login: React.FC = () => {
           </div>
         </Col>
         <Col flex="1 1 1000px">
+        <div className="bg"></div>
+          <div className="bg bg2"></div>
+          <div className="bg bg3"></div>
           <div className="center login-right-div">
             <Space direction="vertical" className="center">
               <img src="logo-full.png" alt="full logo" width={350} />
