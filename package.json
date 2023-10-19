@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "vercel-build": "npx prisma generate && npx prisma migrate deploy && next build"
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^3.2.0",

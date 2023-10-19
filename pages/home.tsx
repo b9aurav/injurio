@@ -15,12 +15,11 @@ import {
   theme,
 } from "antd";
 import Report from "./report";
-import { Footer } from "antd/es/layout/layout";
 import { GithubOutlined, BarChartOutlined, FileTextOutlined } from "@ant-design/icons";
 import Head from "next/head";
 import Analytics from "./analytics";
 
-const { Header, Content } = Layout;
+const { Header, Content, Footer } = Layout;
 
 const Home: React.FC = () => {
   const user = useUser();
