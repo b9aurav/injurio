@@ -45,7 +45,7 @@
 ## Tech Stack
 
 - Front-end: Next.js with Grommet or Ant as the design library.
-- Back-end: Prisma as the ORM for database connectivity.
+- Back-end: PostgreSQL database with Prisma as the ORM for database connectivity.
 - Authentication: Auth0 for user authentication, with options for Google login and email login.
 - Analytics: Chart.js
 - Progressive Web App (PWA)
