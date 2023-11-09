@@ -154,9 +154,6 @@ const BodyMap: React.FC<{
         </div>
       </Col>
       <Col sm={12} xs={24}>
-        <label className="center">
-          Make sure to click 'Update' after giving injury details.
-        </label>
         <Table
           bordered
           pagination={{ hideOnSinglePage: true, pageSize: 5 }}
