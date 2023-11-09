@@ -107,7 +107,7 @@ const BodyMap: React.FC<{
                 : ""
             }
           />
-          <Button
+          {/* <Button
             onClick={(e) => {
               const detailInput = document.querySelector(
                 "#detail-text-" + record.id
@@ -117,7 +117,7 @@ const BodyMap: React.FC<{
             }}
           >
             Update
-          </Button>
+          </Button> */}
         </Space>
       ),
     },

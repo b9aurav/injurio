@@ -132,6 +132,10 @@ const EditReportModal: React.FC<{ isOpen: boolean; onClose: () => void; reportId
     saveReport().then(() => {
       EncircledAreas.forEach((encircleAria: EncircledArea) => {
         deleteAllInjuries();
+        const element = document.querySelector(
+          "#detail-text-" + encircleAria.id
+        ) as HTMLInputElement
+        encircleAria.injuryDescription = element.value;
         saveInjury(encircleAria);
       });
       message.success("Report Saved");
