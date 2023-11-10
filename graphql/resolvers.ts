@@ -36,4 +36,21 @@ export const resolvers = {
         where: { userId: parent.id },
       }),
   },
+
+  Mutation: {
+    createInjuryReport: async (_parent: any, { data }: any, ctx: any) =>
+      await ctx.prisma.injuryReport.create({ data }),
+    updateInjuryReport: async (_parent: any, { id, data }: any, ctx: any) =>
+      await ctx.prisma.injuryReport.update({ where: { id }, data }),
+    deleteInjuryReport: async (_parent: any, { id }: any, ctx: any) =>
+      await ctx.prisma.injuryReport.delete({ where: { id } }),
+
+    createInjuryDetail: async (_parent: any, { data }: any, ctx: any) =>
+      await ctx.prisma.injuryDetail.create({ data }),
+    deleteInjuryDetail: async (_parent: any, { id }: any, ctx: any) =>
+      await ctx.prisma.injuryDetail.delete({ where: { id } }),
+
+    createUser: async (_parent: any, { data }: any, ctx: any) =>
+      await ctx.prisma.user.create({ data }),
+  },
 };
