@@ -11,6 +11,9 @@ import {
 } from "antd";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import BodyMap from "./bodyMap";
+import { useMutation } from "@apollo/client";
+import dayjs from "dayjs";
+import { CREATE_REPORT, CREATE_INJURY } from "@/graphql/queries";
 
 interface EncircledArea {
   id: number;
@@ -32,68 +35,56 @@ const CreateReportModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
     wrapperCol: { span: 16 },
   };
 
-  const onSave = (values: any) => {
+  const [createReport] = useMutation(CREATE_REPORT);
+  const [createInjury] = useMutation(CREATE_INJURY);
+
+  const onSave = async (values: any) => {
     const saveInjury = async (injury: EncircledArea, reportId: number) => {
-      try {
-        const createInjuryResponse = await fetch("/api/injury/create", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            id: injury.id,
+      const { data: createInjuryData } = await createInjury({
+        variables: {
+          data: {
             reportId: reportId,
-            xPos: injury.x,
-            yPos: injury.y,
+            x: injury.x,
+            y: injury.y,
             label: injury.label,
             injuryDescription: injury.injuryDescription,
-          }),
-        });
-
-        if (!createInjuryResponse.ok) {
-          console.error("Error:", createInjuryResponse.statusText);
-        }
-      } catch (error) {
-        console.error("Error:", error);
-      }
+          },
+        },
+      });
     };
 
     const saveReport = async () => {
       try {
-        const createReportResponse = await fetch("/api/report/create", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
+        const { data: createReportData } = await createReport({
+          variables: {
+            data: {
+              userId: user?.sub,
+              name: values.name,
+              datetime: values.datetime || dayjs(),
+            },
           },
-          body: JSON.stringify({
-            userId: user?.sub,
-            name: values.name,
-            datetime: values.datetime,
-          }),
         });
 
-        if (createReportResponse.ok) {
-          const data = await createReportResponse.json();
-          return data.id;
-        } else {
-          console.error("Error:", createReportResponse.statusText);
+        if (createReportData && createReportData.createInjuryReport) {
+          const createdReportId = createReportData.createInjuryReport.id;
+          return createdReportId;
         }
       } catch (error) {
-        console.error("Error:", error);
+        console.error("Error creating report:", error);
+        return null;
       }
     };
 
-    saveReport().then((id) => {
-      EncircledAreas.forEach((encircleAria: EncircledArea) => {
-        const element = document.querySelector(
-          "#detail-text-" + encircleAria.id
-        ) as HTMLInputElement
-        encircleAria.injuryDescription = element.value;
-        saveInjury(encircleAria, id);
-      });
-      message.success("Report Saved");
-      onClose();
+    const reportId: any = await saveReport();
+    EncircledAreas.forEach((encircleAria: EncircledArea) => {
+      const element = document.querySelector(
+        "#detail-text-" + encircleAria.id
+      ) as HTMLInputElement;
+      encircleAria.injuryDescription = element.value;
+      saveInjury(encircleAria, reportId);
     });
+    message.success("Report Saved");
+    onClose();
   };
 
   function updateEncircledAreas(areas: EncircledArea[]): void {
@@ -118,7 +109,7 @@ const CreateReportModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
             <Input />
           </Form.Item>
           <Form.Item name="datetime" label="Date/Time">
-            <DatePicker showTime />
+            <DatePicker showTime defaultValue={dayjs()} />
           </Form.Item>
           <Divider />
           <BodyMap

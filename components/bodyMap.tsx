@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Button, Col, Input, Row, Space, Table, Tooltip, message } from "antd";
 import { ColumnsType } from "antd/es/table";
+import { useQuery } from "@apollo/client";
+import { GET_INJURY_DETAILS } from "@/graphql/queries";
 
 interface EncircledArea {
   id: number;
@@ -41,51 +43,39 @@ const BodyMap: React.FC<{
 
   const handleDeleteArea = (id: number) => {
     const updatedAreas = encircledAreas.filter((area) => area.id !== id);
+    
     setEncircledAreas(updatedAreas);
     onUpdateEncircledAreas(updatedAreas);
   };
 
-  const onUpdateDetails = (id: number, newDetail: string) => {
-    const updatedAreas = encircledAreas.map((area) =>
-      area.id === id ? { ...area, injuryDescription: newDetail } : area
-    );
-    setEncircledAreas(updatedAreas);
-    onUpdateEncircledAreas(updatedAreas);
-  };
-
-  const loadSavedEncircledArea = async () => {
-    try {
-      const getInjuryDetailsResponse = await fetch("/api/injury/get", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          reportId: editReportId,
-        }),
-      });
-
-      if (getInjuryDetailsResponse.ok) {
-        const data = await getInjuryDetailsResponse.json();
-        // Filtering reportId from fetched data
-        const filteredData: EncircledArea[] = data.map(
-          ({ reportId, ...rest }: { reportId: any; [key: string]: any }) => rest
-        );
-        setEncircledAreas(filteredData);
-        onUpdateEncircledAreas(filteredData);
-      } else {
-        console.error("Error:", getInjuryDetailsResponse.statusText);
+  if (forEdit) {
+    const { error, data: injuryData, refetch } = useQuery(GET_INJURY_DETAILS, {
+      variables: { reportId: editReportId },
+    });
+    useEffect(() => {
+      if (injuryData != undefined) {
+        refetch();
+        const fetchEncircledAreas = async () => {
+          setEncircledAreas(injuryData?.injuryDetail);
+        };
+        fetchEncircledAreas();
       }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
+    }, [injuryData, error]);
+  }
 
-  useEffect(() => {
-    if (forEdit) {
-      loadSavedEncircledArea();
-    }
-  }, []);
+  const updateDescription = (label: number)  => {
+      const updatedAreas = encircledAreas.map((area) => {
+        const element = document.querySelector(
+          "#detail-text-" + label
+        ) as HTMLInputElement;
+        const updatedArea = { ...area };
+        updatedArea.injuryDescription = element.value || "";
+    
+        return updatedArea;
+      });
+      setEncircledAreas(updatedAreas);
+      onUpdateEncircledAreas(updatedAreas);
+  }
 
   const columns: ColumnsType<EncircledArea> = [
     {
@@ -99,25 +89,15 @@ const BodyMap: React.FC<{
       render: (record) => (
         <Space>
           <Input
-            id={"detail-text-" + record.id}
+            id={"detail-text-" + record.label}
+            onChange={() => updateDescription(record.label)}
             defaultValue={
               forEdit
-                ? encircledAreas.find((area) => area.id === record.id)
+                ? encircledAreas.find((area) => area.label === record.label)
                     ?.injuryDescription
                 : ""
             }
           />
-          {/* <Button
-            onClick={(e) => {
-              const detailInput = document.querySelector(
-                "#detail-text-" + record.id
-              ) as HTMLInputElement;
-              onUpdateDetails(record.id, detailInput.value);
-              message.success("Details Updated");
-            }}
-          >
-            Update
-          </Button> */}
         </Space>
       ),
     },

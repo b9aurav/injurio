@@ -4,9 +4,10 @@ export const typeDefs = gql`
   scalar DateTime
 
   type Query {
-    injuryReports: [InjuryReport!]!
-    injuryDetail: [InjuryDetail!]!
-    user: [User!]!
+    injuryReports(id: String!): InjuryReport
+    injuryDetail(reportId: Int!): [InjuryDetail]
+    user(id: String!): User
+    allUsers: [User!]!
   }
 
   type InjuryReport {
@@ -39,10 +40,10 @@ export const typeDefs = gql`
   type Mutation {
     createInjuryReport(data: CreateInjuryReportInput!): InjuryReport!
     updateInjuryReport(id: Int!, data: UpdateInjuryReportInput!): InjuryReport!
-    deleteInjuryReport(id: Int!): InjuryReport!
+    deleteInjuryReport(id: Int!): Boolean
 
     createInjuryDetail(data: CreateInjuryDetailInput!): InjuryDetail!
-    deleteInjuryDetail(id: Int!): InjuryDetail!
+    deleteInjuryDetail(reportId: Int!): Boolean
 
     createUser(data: CreateUserInput!): User!
   }

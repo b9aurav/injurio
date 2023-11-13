@@ -6,6 +6,8 @@ import { useUser } from "@auth0/nextjs-auth0/client";
 import { FilterConfirmProps } from "antd/es/table/interface";
 import CreateReportModal from "@/components/createReportModal";
 import EditReportModal from "@/components/editReportModal";
+import { useQuery } from "@apollo/client";
+import { GET_USER_REPORTS } from "@/graphql/queries";
 
 interface DataType {
   id: number;
@@ -29,21 +31,37 @@ const Report: React.FC = () => {
 
   const loader = () => {
     messageApi.open({
-      type: 'loading',
-      content: 'Please wait...',
+      type: "loading",
+      content: "Please wait...",
       duration: 0,
     });
   };
+
+  const {
+    loading,
+    error,
+    data: queryData,
+    refetch,
+  } = useQuery(GET_USER_REPORTS, {
+    variables: { userId: user?.sub },
+  });
+
+  useEffect(() => {
+    if (loading) {
+      loader();
+    } else {
+      messageApi.destroy();
+      setData(queryData?.user?.reports || []);
+    }
+  }, [loading, queryData]);
 
   const openCreateReportModal = () => {
     setCreateModalOpen(true);
   };
 
-  const closeCreateReportModal = () => {
+  const closeCreateReportModal = async () => {
     setCreateModalOpen(false);
-    getReports().then((reports) => {
-      setData(reports);
-    });
+    await refetch();
   };
 
   const openEditReportModal = (
@@ -57,11 +75,9 @@ const Report: React.FC = () => {
     setEditModalOpen(true);
   };
 
-  const closeEditReportModal = () => {
+  const closeEditReportModal = async () => {
     setEditModalOpen(false);
-    getReports().then((reports) => {
-      setData(reports);
-    });
+    await refetch();
   };
 
   type DataIndex = keyof DataType;
@@ -154,33 +170,6 @@ const Report: React.FC = () => {
       ),
     },
   ];
-
-  const getReports = async () => {
-    try {
-      const getReportsResponse = await fetch("/api/report/get", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: user?.sub,
-        }),
-      });
-      if (getReportsResponse.ok) {
-        return await getReportsResponse.json();
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
-  useEffect(() => {
-    loader();
-    getReports().then((reports) => {
-      setData(reports);
-    });
-    messageApi.destroy();
-  }, []);
 
   return (
     <>

@@ -16,6 +16,8 @@ import {
 } from "chart.js";
 import { Dropdown, MenuProps, Space, Typography, message } from "antd";
 import DownOutlined from "@ant-design/icons";
+import { useQuery } from "@apollo/client";
+import { GET_USER_REPORTS } from "@/graphql/queries";
 
 Chart.register([
   CategoryScale,
@@ -61,23 +63,20 @@ const Analytics = () => {
     },
   ];
 
+  const {
+    loading,
+    error,
+    data: queryData,
+  } = useQuery(GET_USER_REPORTS, {
+    variables: { userId: user.user?.sub },
+  });
+
   useEffect(() => {
     const getReportData = async () => {
       try {
-        const getReportsResponse = await fetch("/api/report/get", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            userId: user.user?.sub,
-          }),
-        });
-        if (getReportsResponse.ok) {
-          const reports = await getReportsResponse.json();
+        if (queryData) {
           const countsMap: { [key: string]: number } = {};
-
-          reports.forEach((element: any) => {
+          queryData.user.reports.forEach((element: any) => {
             const label: string =
               (dayjs(element.datetime).month() + 1).toString() +
               "/" +

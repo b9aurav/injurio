@@ -6,10 +6,12 @@ export const resolvers = {
   Query: {
     injuryReports: async (_parent: any, _args: any, ctx: any) =>
       await ctx.prisma.injuryReport.findMany(),
-    injuryDetail: async (_parent: any, _args: any, ctx: any) =>
-      await ctx.prisma.injuryDetail.findMany(),
-    user: async (_parent: any, _args: any, ctx: any) =>
+    injuryDetail: async (_parent: any, { reportId }: any, ctx: any) =>
+      await ctx.prisma.injuryDetail.findMany({ where: { reportId: reportId } }),
+    allUsers: async (_parent: any, _args: any, ctx: any) =>
       await ctx.prisma.user.findMany(),
+    user: async (_parent: any, { id }: any, ctx: any) =>
+      await ctx.prisma.user.findUnique({ where: { id } }),
   },
 
   InjuryReport: {
@@ -42,13 +44,27 @@ export const resolvers = {
       await ctx.prisma.injuryReport.create({ data }),
     updateInjuryReport: async (_parent: any, { id, data }: any, ctx: any) =>
       await ctx.prisma.injuryReport.update({ where: { id }, data }),
-    deleteInjuryReport: async (_parent: any, { id }: any, ctx: any) =>
-      await ctx.prisma.injuryReport.delete({ where: { id } }),
+    deleteInjuryReport: async (_parent: any, { id }: any, ctx: any) => {
+      try {
+        await ctx.prisma.injuryReport.delete({ where: { id } });
+        return true;
+      } catch (error) {
+        console.error(error);
+        return false;
+      }
+    },
 
     createInjuryDetail: async (_parent: any, { data }: any, ctx: any) =>
       await ctx.prisma.injuryDetail.create({ data }),
-    deleteInjuryDetail: async (_parent: any, { id }: any, ctx: any) =>
-      await ctx.prisma.injuryDetail.delete({ where: { id } }),
+    deleteInjuryDetail: async (_parent: any, { reportId }: any, ctx: any) => {
+      try {
+        await ctx.prisma.injuryDetail.deleteMany({ where: { reportId } });
+        return true;
+      } catch (error) {
+        console.error(error);
+        return false;
+      }
+    },
 
     createUser: async (_parent: any, { data }: any, ctx: any) =>
       await ctx.prisma.user.create({ data }),
